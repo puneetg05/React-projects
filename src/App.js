@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import { Route } from 'react-router-dom';
+import { Route, Switch, Link } from 'react-router-dom';
 import './index.css';
 import Game from "./components/TicTacToe/game";
 import Todo from "./components/TodoList/Todo";
@@ -11,6 +11,29 @@ import WithLoading from "./components/Loader/Loader";
 
 const ListWithLoading = WithLoading(ListContacts);
 const CreateContactWithLoading = WithLoading(CreateContact);
+
+const ROUTES = [
+    {
+        key: 'contactList',
+        value: '/contactlist',
+        name: 'Contact List'
+    }, 
+    {
+        key: 'todolist',
+        value: '/todoList',
+        name: 'Todo List'
+    },
+    {
+        key: 'tictactoe',
+        value: '/tictactoe',
+        name: 'Tic Tac Toe'
+    },
+    {
+        key: 'recipes',
+        value: '/recipes',
+        name: 'Recipes'
+    }
+]
 
 export default class App extends React.Component {
     
@@ -59,17 +82,25 @@ export default class App extends React.Component {
 
     render() {
         return (
-            <div>
-               
-                <Route path="/tictactoe" component={Game} />
-                <Route path="/todolist" component={Todo} />
+            <Switch>
+                <Route exact path="/" render = {() => (
+                    <ol>
+                        {
+                            ROUTES.map((route) => 
+                            <li> <Link id={route.key} to={route.value}>{route.name}</Link> </li>
+                            )
+                        }
+                    </ol> 
+                )} />
+                <Route exact path="/tictactoe" component={Game} />
+                <Route exact path="/todolist" component={Todo} />
                 {/* <Route exact path='/' render = {() => (
                     <ListContacts 
                         onDeleteContact={this.removeContact} 
                         contacts = {this.state.contacts}
                     />
                 )} /> */}
-                <Route exact path='/' render = {() => (
+                <Route exact path='/contactList' render = {() => (
                     <ListWithLoading isLoading = {this.state.loading} onDeleteContact={this.removeContact}  contacts = {this.state.contacts} />
                 )} />
                 {/* <Route path="/create" render={({ history }) => (
@@ -80,16 +111,16 @@ export default class App extends React.Component {
                         }}
                     />
                 )}/> */}
-                <Route path="/create" render={({ history }) => (
+                <Route exact path="/create" render={({ history }) => (
                     < CreateContactWithLoading 
                         isLoading = {this.state.loading}
                         onCreateContact = {(contact) => {
                             this.createContact(contact);
-                            history.push('/');
+                            history.push('/contactList');
                         }}
                     />
                 )}/>
-            </div>
+            </Switch>
         );
     }
 }
